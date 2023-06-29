@@ -1,15 +1,13 @@
 import { Form, Segment, Button } from "semantic-ui-react";
-import { Activity } from "../../../app/models/activity";
 import { ChangeEvent, useState } from "react";
+import { useStore } from "../../../app/stores/store";
+import { observer } from "mobx-react-lite";
 
 
-interface Props {
-    closeForm: () => void;
-    activity: Activity | undefined;
-    handleSubmit: (activity: Activity) => void;
-}
 
-export default function ActivityForm({ closeForm, activity: selectedActivity, handleSubmit }: Props) {
+export default observer(function ActivityForm() {
+    const { activityStore } = useStore();
+    const { selectedActivity, closeForm, createActivity, updateActivity, loadingMode } = activityStore;
     const initialState = selectedActivity ?? {
         id: "",
         title: "",
@@ -19,12 +17,14 @@ export default function ActivityForm({ closeForm, activity: selectedActivity, ha
         venue: "",
         date: "",
     }
-    const [activity, setActivity] = useState(initialState);
 
+    const [activity, setActivity] = useState(initialState);
 
     function handleSubmitt() {
         // console.log(activity);
-        handleSubmit(activity);
+        // handleSubmit(activity);
+        console.log(activity , "act");
+        activity.id ? updateActivity(activity) : createActivity(activity);
 
     }
 
@@ -40,7 +40,7 @@ export default function ActivityForm({ closeForm, activity: selectedActivity, ha
                 <Form.Input placeholder="Title" value={activity.title} onChange={handleInputChange} name="title" />
                 <Form.TextArea placeholder="Description" value={activity.description} onChange={handleInputChange} name="description" />
 
-                <Form.Input placeholder="Date" value={activity.date} onChange={handleInputChange} name="date" />
+                <Form.Input type="date" placeholder="Date" value={activity.date} onChange={handleInputChange} name="date" />
 
                 <Form.Input placeholder="Category" value={activity.category} onChange={handleInputChange} name="category" />
 
@@ -48,7 +48,7 @@ export default function ActivityForm({ closeForm, activity: selectedActivity, ha
 
                 <Form.Input placeholder="Venue" value={activity.venue} onChange={handleInputChange} name="venue" />
 
-                <Button  floated="right" positive content="Submit" type="submit" />
+                <Button loading={loadingMode} floated="right" positive content="Submit" type="submit" />
                 <Button onClick={closeForm} floated="right" content="Cancel" type="button" />
 
             </Form>
@@ -56,4 +56,4 @@ export default function ActivityForm({ closeForm, activity: selectedActivity, ha
         </Segment>
     )
 
-}
+})
