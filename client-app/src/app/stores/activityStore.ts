@@ -62,8 +62,7 @@ export default class ActivityStore {
         this.loadingMode = true;
         activity.id = uuid();
         // Convert user input date to backend format
-        const userInputDate = new Date(activity.date).toISOString();
-        activity.date = userInputDate;
+        if (activity.date) activity.date = new Date(activity.date).toISOString();
         // console.log(activity);
         try {
             await agent.Activities.create(activity);
@@ -85,8 +84,7 @@ export default class ActivityStore {
     updateActivity = async (activity: Activity) => {
         this.loadingMode = true;
         // Convert user input date to backend format
-        const userInputDate = new Date(activity.date).toISOString();
-        activity.date = userInputDate;
+        if (activity.date) activity.date = new Date(activity.date).toISOString();
         console.log(activity);
         try {
             await agent.Activities.update(activity);
@@ -95,7 +93,6 @@ export default class ActivityStore {
                 this.selectedActivity = activity;
                 this.loadingMode = false;
                 this.editMode = false;
-
             })
 
         } catch (error) {
